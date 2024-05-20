@@ -1,0 +1,21 @@
+Name            : {name}
+Version         : 0.0.0-0
+Description     : foo bar
+Architecture    : any
+URL             : https://example.com
+Licenses        : None
+Groups          : None
+Provides        : None
+Depends On      : {deps}
+Optional Deps   : None
+Required By     : None
+Optional For    : None
+Conflicts With  : None
+Replaces        : None
+Installed Size  : {size}
+Packager        : Unknown Packager
+Build Date      : Wed 11 Oct 2023 05:14:33 PM -03
+Install Date    : Wed 11 Oct 2023 05:16:07 PM -03
+Install Reason  : {package_type}
+Install Script  : No
+Validated By    : None

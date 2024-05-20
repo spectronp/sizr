@@ -1,0 +1,6 @@
+{"name":"aalib","isExplicit":"false","size":"286720","deps":["glibc, gpm, libx11, ncurses, slang"]}
+{"name":"abseil-cpp","isExplicit":"false","size":"6291456","deps":["gcc-libs"]}
+{"name":"acl","isExplicit":"false","size":"337920","deps":["glibc"]}
+{"name":"act","isExplicit":"true","size":"16777216","deps":["None"]}
+{"name":"adobe-source-code-pro-fonts","isExplicit":"false","size":"1954816","deps":["None"]}
+{"name":"adobe-source-han-sans-jp-fonts","isExplicit":"true","size":"31457280","deps":["None"]}

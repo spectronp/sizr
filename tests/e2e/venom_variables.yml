@@ -1,0 +1,14 @@
+version: 'v0.1.0' # TODO -- find way to get version automatically
+help_message: | # TODO -- display the usage
+  sizr [-l | --limit N]
+  sizr <package_name>
+
+default_output: |
+  pack1_v0.0.0-1 20000
+  pack2_v0.0.0-1 12000
+  pack3_v0.0.0-1 10000
+limit_output: |
+  pack1_v0.0.0-1 20000
+  pack2_v0.0.0-1 12000
+single_pack_output: |
+  pack1_v0.0.0-1 20000
