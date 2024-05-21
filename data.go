@@ -34,11 +34,12 @@ func getPackages(manager string, runner ScriptRunner) map[string]Package {
 	// TODO -- cache system
 
 	packages := make(map[string]Package)
-	raw_result, _ := runner(manager + "/get-all-info")
-	packagesJson := strings.Fields(raw_result)
-	for _, pack := range packagesJson {
+	raw_result, _ := runner(manager + "/get-all")
+	packagesNames := strings.Fields(raw_result)
+	for _, pack := range packagesNames {
 		var newPack Package	
-		json.Unmarshal([]byte(pack), &newPack)	
+		packageJson, _ := runner(manager + "/info", pack)
+		json.Unmarshal([]byte(packageJson), &newPack)	
 		packages[newPack.name] = newPack
 	}
 	 
