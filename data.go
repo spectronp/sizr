@@ -1,11 +1,11 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"maps"
 	"os/exec"
 	"path/filepath"
-	"strconv"
 	"strings"
 )
 
@@ -34,38 +34,14 @@ func getPackages(manager string, runner ScriptRunner) map[string]Package {
 	// TODO -- cache system
 
 	packages := make(map[string]Package)
-	raw_result, _ := runner(manager + "/get-all")
-	packagesName := strings.Fields(raw_result)
-
-	for _, packName := range packagesName { // TODO -- too slow
-		raw_info, _ := runner(manager + "/info", packName)
-		info := strings.Fields(raw_info)
-		
-		isExplict, err := strconv.ParseBool(info[1])
-		if err != nil {
-			fmt.Println("erro no explictic")		
-			fmt.Println(err)
-		}	
-
-		size, err := strconv.ParseUint(info[2], 10, 0)
-		if err != nil {
-			fmt.Println("erro no size")
-			fmt.Println(err)
-		}	
-
-		deps := strings.Fields(info[3])
-
-		pack := Package{
-			info[0],
-			isExplict,
-			uint(size),
-			deps,	
-		}
-		packages[packName] = pack	
-		
-		fmt.Printf("%v %v", packName, size)
-		fmt.Println("")
-	} 
+	raw_result, _ := runner(manager + "/get-all-info")
+	packagesJson := strings.Fields(raw_result)
+	for _, pack := range packagesJson {
+		var newPack Package	
+		json.Unmarshal([]byte(pack), &newPack)	
+		packages[newPack.name] = newPack
+	}
+	 
 	return packages
 }
 

@@ -19,16 +19,13 @@ get_info() {
 	if [ "$size_unit" = "B" ] # TODO -- use elif
 	then
 		printf "%.0f\n" "$size_num"
-	fi
-	if [ "$size_unit" = "KiB" ]
+	elif [ "$size_unit" = "KiB" ]
 	then
 		printf "%.0f" "$size_num" | awk '{ print $1 * 1024 }'
-	fi
-	if [ "$size_unit" = "MiB" ]
+	elif [ "$size_unit" = "MiB" ]
 	then
 		printf "%.0f" "$size_num" | awk '{ print $1 * 1024 ^ 2 }'
-	fi
-	if [ "$size_unit" = "GiB" ]
+	elif [ "$size_unit" = "GiB" ]
 	then
 		printf "%.0f" "$size_num" | awk '{ print $1 * 1024 ^ 3 }'
 	fi
