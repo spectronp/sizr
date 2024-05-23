@@ -32,9 +32,9 @@ fi
 # Dependencies
 deps=$( echo "$pacman_output" | grep '^Depends On' | tr -s ' ' | cut -d ' ' -f4- | sed 's/ /", "/g' )
 
-jq -cnaM \
+jq -rcnaM \
 	--arg name "$name" \
-	--arg is_explicit "$is_explicit" \
-	--arg size "$size" \
+	--argjson is_explicit "$is_explicit" \
+	--argjson size "$size" \
 	--arg deps "$deps" \
 	'{"name":$name,"isExplicit":$is_explicit,"size":$size,"deps":[$deps]}'

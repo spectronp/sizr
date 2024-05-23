@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"maps"
+	"sort"
 )
 
 // TODO -- use concurrency | paralelism
@@ -21,9 +22,9 @@ func calcSize(pack string, data Data) uint {
 func listTree(target Package, data Data) map[string]Package {
 	finalMap := make(map[string]Package)
 
-	for _, packName := range target.deps {
+	for _, packName := range target.Deps {
 		pack := data.GetPackage(packName)
-		finalMap[pack.name] = pack
+		finalMap[pack.Name] = pack
 
 		maps.Copy(finalMap, listTree(pack, data))
 	}
@@ -34,10 +35,10 @@ func listTree(target Package, data Data) map[string]Package {
 	NOTE -- maybe use listTree first with an ignorePackages parameter and then iterate the list doing the sum ?
 */
 func sumSize(start Package, ignorePackages map[string]Package, data Data) uint {
-	totalSize := start.size
+	totalSize := start.Size
 	
-	for _, packName := range start.deps {
-		if (ignorePackages[packName].name == packName){ // TODO -- refactor this line
+	for _, packName := range start.Deps {
+		if (ignorePackages[packName].Name == packName){ // TODO -- refactor this line
 			continue
 		}
 		pack := data.GetPackage(packName)
@@ -46,13 +47,49 @@ func sumSize(start Package, ignorePackages map[string]Package, data Data) uint {
 	return totalSize
 }
 
-func main()  {
-	Run()
+type PackageNameWithSum struct {
+	Name string
+	Size uint
+}
+
+func orderBySumSize(data Data) []PackageNameWithSum {
+	explicitPackages := data.GetExplicit()	
+	orderedPacks := []PackageNameWithSum{}
+	for _, pack := range explicitPackages {
+		packSize := calcSize(pack.Name, data)		
+		insertIndex := sort.Search(len(orderedPacks), func(i int) bool { return orderedPacks[i].Size <= packSize })
+		
+		if insertIndex == len(orderedPacks) {
+			orderedPacks = append(orderedPacks, PackageNameWithSum{ Name: pack.Name, Size: packSize })
+			continue
+		}
+		orderedPacks = append(orderedPacks[:insertIndex+1], orderedPacks[insertIndex:]...) // NOTE -- should i make more readable ?
+		orderedPacks[insertIndex] = PackageNameWithSum{ Name: pack.Name, Size: packSize }
+	}
+	return orderedPacks
+}
+
+func report(packages []PackageNameWithSum, limit uint8) {
+	if limit == 0 {
+		limit = 30
+	}
+
+	// TODO -- display human readable size
+
+	var i uint8
+	for i = 0; i <= limit; i++ {
+		fmt.Println(packages[i].Name, " ", packages[i].Size)
+	}
 }
 
 func Run()  {
+	// arg parse
 	data, _ := NewData(RunScript)
-	fmt.Println(data.PackageList["steam"].size)
+	// CLI or TUI
 
-	// `
+	report(orderBySumSize(data), 0)
+}
+
+func main()  {
+	Run()
 }

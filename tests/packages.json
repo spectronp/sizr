@@ -1,6 +1,6 @@
 {
   "exp1": {
-    "isExplict": true,
+    "isExplicit": true,
     "size": 10000,
     "deps": [
       "rev1",
@@ -10,7 +10,7 @@
     "name": "exp1"
   },
   "exp2": {
-    "isExplict": true,
+    "isExplicit": true,
     "size": 10000,
     "deps": [
       "dep13",
@@ -20,7 +20,7 @@
     "name": "exp2"
   },
   "exp3": {
-    "isExplict": true,
+    "isExplicit": true,
     "size": 10000,
     "deps": [
       "dep11",

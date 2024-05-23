@@ -1,15 +1,18 @@
 #!/usr/bin/env bash
 
+BASE_PATH=$( dirname "$0" )
+
 script="$1"
 shift
 
 case "$script" in
 	"get-package-manager")
-		echo "pm"
+		echo -n "pm"
 		;;
 	"pm/get-all")
-		awk '{ print $1 }' ./e2e/packages-gen.txt
+		jq -r '.[] | .name' "$BASE_PATH/packages.json"
 		;;
 	"pm/info")
-		grep "^$1 " ./e2e/packages-gen.txt | sed -e 's/ /\n/g' -e 's/,/ /g' -e 's/exp/true/' -e 's/dep/false/'
+		jq -caM ".$1" "$BASE_PATH/packages.json"
+
 esac

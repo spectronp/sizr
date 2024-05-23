@@ -4,11 +4,11 @@ help_message: | # TODO -- display the usage
   sizr <package_name>
 
 default_output: |
-  pack1_v0.0.0-1 20000
-  pack2_v0.0.0-1 12000
-  pack3_v0.0.0-1 10000
+  pack1 20000
+  pack2 12000
+  pack3 10000
 limit_output: |
-  pack1_v0.0.0-1 20000
-  pack2_v0.0.0-1 12000
+  pack1 20000
+  pack2 12000
 single_pack_output: |
-  pack1_v0.0.0-1 20000
+  pack1 20000

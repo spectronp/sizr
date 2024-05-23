@@ -1,8 +1,6 @@
 package main
 
 import (
-	"encoding/json"
-	"os"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
@@ -10,17 +8,17 @@ import (
 
 var data Data;
 
-func Init() {
-	jsonData, _ := os.ReadFile("packages.json")  
-	json.Unmarshal(jsonData, &data)
+func TestMain(m *testing.M) {
+	data, _ = NewData(mockRunner)
+	m.Run()	
 }
 
 func TestListTree(t *testing.T)  {
 	firstPack := Package{
-		name: "zjvut",
-		isExplict: true,
-		size: 2704100,
-		deps: []string{"kcptm", "tzxvn", "lebsv"},
+		Name: "zjvut",
+		IsExplicit: true,
+		Size: 2704100,
+		Deps: []string{"kcptm", "tzxvn", "lebsv"},
 	}
 
 	expectedList := []string{"kcptm", "yavjp", "ujgpd", "tqkwg", "ioleb", "fmesb", "tzxvn", "klkrz", "lebsv"}
@@ -32,6 +30,14 @@ func TestListTree(t *testing.T)  {
 
 	if cmp.Equal(expectedList, listTree(firstPack, data)) {
 		t.Fail()
+	}
+}
+
+func TestOrderBySum(t *testing.T) {
+	orderedPackages := orderBySumSize(data)	
+
+	if len(orderedPackages) != 3 {
+		t.Errorf("Expected 3 packages, got %d", len(orderedPackages))
 	}
 }
 

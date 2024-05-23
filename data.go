@@ -9,23 +9,27 @@ import (
 	"strings"
 )
 
-type Package struct {
-	name string
-	isExplict bool
-	size uint
-	deps []string // NOTE -- change this to []*Package or map[string]*Packge ?
+type Package struct { // TODO -- make fields exported and immutable
+	Name string
+	IsExplicit bool
+	Size uint
+	Deps []string // NOTE -- change this to []*Package or map[string]*Packge ?
 }
 
 
 type Data struct {
 	Manager string
-	PackageList map[string]Package // NOTE -- change name to Packages or PackageMap ?
+	PackageList map[string]Package // NOTE -- change name to Packages or PackageMap ? | Should this be private ?
 }
 
 type ScriptRunner func(script string, args ...string) (output string, err error)
 
 func NewData(runner ScriptRunner) (data Data, err error) {
 	manager, err := runner("get-package-manager")
+	if err != nil {
+		err = fmt.Errorf("Error on getting package manager: %w", err)
+		fmt.Printf("ERROR: %s", err)
+	}
 	packageList := getPackages(manager, runner)
 	return Data{Manager: manager, PackageList: packageList}, err
 } 
@@ -34,15 +38,23 @@ func getPackages(manager string, runner ScriptRunner) map[string]Package {
 	// TODO -- cache system
 
 	packages := make(map[string]Package)
-	raw_result, _ := runner(manager + "/get-all")
+	raw_result, err := runner(manager + "/get-all")
+	if err != nil {
+		fmt.Printf("Error on getPackages: %s \n", err)
+	}
 	packagesNames := strings.Fields(raw_result)
 	for _, pack := range packagesNames {
 		var newPack Package	
-		packageJson, _ := runner(manager + "/info", pack)
-		json.Unmarshal([]byte(packageJson), &newPack)	
-		packages[newPack.name] = newPack
+		packageJson, err := runner(manager + "/info", pack)
+		if err != nil {
+			fmt.Printf("Error on running info.sh: %s\n", err)
+		}
+		err = json.Unmarshal([]byte(packageJson), &newPack)	
+		if err != nil {
+			fmt.Printf("Error on Unmarshal: %s\n", err)
+		}
+		packages[newPack.Name] = newPack
 	}
-	 
 	return packages
 }
 
@@ -55,7 +67,7 @@ func (d Data) GetExplicit() map[string]Package { // TODO -- try to use map[strin
 	packs := d.PackageList // TODO -- check if this is not changing the data field itself ( maybe use maps.Clone instead )
 
 	maps.DeleteFunc(packs, func (_ string, pack Package) bool {
-		return  !pack.isExplict
+		return  !pack.IsExplicit
 	})
 	return packs
 } 

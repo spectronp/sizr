@@ -1,6 +1,6 @@
 ## Usage
 '''
-sizr [-l | --limit]
+sizr [-n | --limit]
 sizr -v | --version
 sizr -h | --help
 '''
