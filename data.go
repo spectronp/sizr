@@ -27,8 +27,7 @@ type ScriptRunner func(script string, args ...string) (output string, err error)
 func NewData(runner ScriptRunner) (data Data, err error) {
 	manager, err := runner("get-package-manager")
 	if err != nil {
-		err = fmt.Errorf("Error on getting package manager: %w", err)
-		fmt.Printf("ERROR: %s", err)
+		err = fmt.Errorf("Error on getting package manager: %w\n", err)
 	}
 	packageList := getPackages(manager, runner)
 	return Data{Manager: manager, PackageList: packageList}, err
