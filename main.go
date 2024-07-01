@@ -9,7 +9,7 @@ import (
 // TODO -- use concurrency | paralelism
 func calcSize(pack string, data Data) uint {
 	target := data.GetPackage(pack)
-	explictPackages := data.GetExplicit()
+	explictPackages := data.GetExplicit() // TODO -- fix typo explict to explicit
 	delete(explictPackages, pack)
 
 	depsToIgnore := make(map[string]Package) // NOTE -- could I use map[string]bool ?
@@ -36,7 +36,7 @@ func listTree(target Package, data Data) map[string]Package {
 */
 func sumSize(start Package, ignorePackages map[string]Package, data Data) uint {
 	totalSize := start.Size
-	
+
 	for _, packName := range start.Deps {
 		if (ignorePackages[packName].Name == packName){ // TODO -- refactor this line
 			continue
@@ -78,18 +78,23 @@ func report(packages []PackageNameWithSum, limit uint8) {
 
 	var i uint8
 	for i = 0; i <= limit; i++ {
-		fmt.Println(packages[i].Name, " ", packages[i].Size)
+		if i >= uint8(len(packages)) {
+			break
+		}
+		fmt.Printf("%s\t%d\n", packages[i].Name, packages[i].Size)
 	}
 }
 
-func Run()  {
+func Run() int {
 	// arg parse
 	data, _ := NewData(RunScript)
 	// CLI or TUI
 
 	report(orderBySumSize(data), 0)
+
+	return 0
 }
 
-func main()  {
+func main() {
 	Run()
 }
