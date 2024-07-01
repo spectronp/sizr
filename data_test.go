@@ -49,11 +49,17 @@ func TestGetPackage(t *testing.T) {
 
 func TestGetExplicit(t *testing.T) {
 	data, _ := NewData(mockRunner)
-	
+	lenBefore := len(data.PackageList)	
+
 	explicitPackages := data.GetExplicit()
+	lenAfter := len(data.PackageList)
 
 	if len(explicitPackages) != 3 {
 		t.Errorf("Expected 3 packages, got %d", len(explicitPackages))
+	}
+
+	if lenBefore != lenAfter {
+		t.Errorf("Data have been modified, len before: %d, len after: %d", lenBefore, lenAfter)
 	}
 	// TODO -- compare both
 }

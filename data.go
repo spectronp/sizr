@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"maps"
 	"os/exec"
 	"path/filepath"
 	"strings"
@@ -63,12 +62,15 @@ func (d Data) GetPackage(name string) Package  {
 }
 
 func (d Data) GetExplicit() map[string]Package { // TODO -- try to use map[string]*Package
-	packs := d.PackageList // TODO -- check if this is not changing the data field itself ( maybe use maps.Clone instead )
+	explicit := make(map[string]Package)
 
-	maps.DeleteFunc(packs, func (_ string, pack Package) bool {
-		return  !pack.IsExplicit
-	})
-	return packs
+	for _, pack := range d.PackageList {
+		if pack.IsExplicit {
+			explicit[pack.Name] = pack
+		}		
+	}	
+
+	return explicit
 } 
 
 func RunScript(script string, args ...string) (output string, err error) {
