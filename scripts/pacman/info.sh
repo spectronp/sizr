@@ -15,7 +15,7 @@ install_reason=$( echo "$pacman_output" | grep '^Install Reason' | tr -s ' ' | c
 size_num=$( echo "$pacman_output" | grep '^Installed Size' | tr -s ' ' | cut -d ' ' -f4 )
 size_unit=$( echo "$pacman_output" | grep '^Installed Size' | tr -s ' ' | cut -d ' ' -f5)
 
-if [ "$size_unit" = "B" ] # TODO -- use elif
+if [ "$size_unit" = "B" ]
 then
 	size=$( printf "%.0f\n" "$size_num" )	
 elif [ "$size_unit" = "KiB" ]
@@ -36,5 +36,5 @@ jq -rcnaM \
 	--arg name "$name" \
 	--argjson is_explicit "$is_explicit" \
 	--argjson size "$size" \
-	--arg deps "$deps" \
-	'{"name":$name,"isExplicit":$is_explicit,"size":$size,"deps":[$deps]}'
+	--argjson deps "[\"$deps\"]" \
+	'{"name":$name,"isExplicit":$is_explicit,"size":$size,"deps":$deps}'
