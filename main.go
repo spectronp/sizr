@@ -3,7 +3,15 @@ package main
 import (
 	"fmt"
 	"maps"
+	"os"
 	"sort"
+
+	"github.com/spf13/pflag"
+)
+
+var (
+	VERSION string
+	HELP_MESSAGE string
 )
 
 // TODO -- use concurrency | paralelism
@@ -70,14 +78,9 @@ func orderBySumSize(data Data) []PackageNameWithSum {
 }
 
 func report(packages []PackageNameWithSum, limit uint8) {
-	if limit == 0 {
-		limit = 30
-	}
-
 	// TODO -- display human readable size
-
 	var i uint8
-	for i = 0; i <= limit; i++ {
+	for i = 0; i < limit; i++ {
 		if i >= uint8(len(packages)) {
 			break
 		}
@@ -85,16 +88,32 @@ func report(packages []PackageNameWithSum, limit uint8) {
 	}
 }
 
-func Run() int {
-	// arg parse
+func Run(args []string) int {
+	flag := pflag.NewFlagSet("", 1)
+
+	helpWanted := flag.BoolP("help", "h", false, "Show this help message")
+	wantVersion := flag.BoolP("version", "v", false, "Show sizr version")	
+	reportLimit := flag.Uint8P("limit", "n", 30, "Set the limit of packages to show (Default: 30)")
+	flag.Parse(args)
+
+	if *helpWanted {
+		fmt.Print(HELP_MESSAGE)
+		return 0
+	}
+	if *wantVersion {
+		fmt.Printf("sizr %s\n", VERSION)
+		return 0	
+	}
+	
 	data, _ := NewData(RunScript)
 	// CLI or TUI
 
-	report(orderBySumSize(data), 0)
+	report(orderBySumSize(data), *reportLimit)
 
 	return 0
 }
 
 func main() {
-	Run()
+	Run(os.Args)
+	// NOTE -- use os.Exit() with return code here ?
 }

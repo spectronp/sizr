@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"io"
+	"log"
 	"os"
 	"testing"
 
@@ -12,6 +13,14 @@ import (
 var data Data;
 
 func TestMain(m *testing.M) {
+	VERSION = "v0.1"
+	helpBytes, err := os.ReadFile(".help")
+	if err != nil {
+		log.Println("Error on reading .help")	
+		panic(err)
+	}
+	HELP_MESSAGE = string(helpBytes)
+
 	data, _ = NewData(mockRunner) // NOTE -- if Data is broken, this data will break this tests too ( data is used more along the file )
 	m.Run()	
 }
@@ -81,7 +90,9 @@ func TestOrderBySum(t *testing.T) {
 
 // E2E Tests
 
-func runApp() (int, string) {
+func runApp(args []string) (int, string) {
+	args = append([]string{"sizr"}, args...)
+
 	pipeReader, pipeWriter, err := os.Pipe()	
 	if err != nil {
 		panic(err)
@@ -94,7 +105,7 @@ func runApp() (int, string) {
 	os.Stderr = pipeWriter
 	var returnCode int
 	go func() {
-		returnCode = Run()
+		returnCode = Run(args)
 		pipeWriter.Close()
 	}()
 	
@@ -108,12 +119,41 @@ func runApp() (int, string) {
 	return returnCode, string(output)
 }
 
-// TestVersionOutput
+func TestVersionOutput(t *testing.T) {
+	args := []string{"--version"}
 
-// TestHelpOutput
+	expectedOutput := "sizr v0.1\n" // TODO -- get this automatticaly
+
+	returnCode, output := runApp(args)
+
+	if returnCode != 0 {
+		t.Errorf("Expected return code 0, got %d", returnCode)
+	}
+
+	if output != expectedOutput {
+		t.Errorf("expected output: %s, got output: %s", expectedOutput, output)
+	}
+}
+
+func TestHelpOutput(t *testing.T) {
+	args := []string{"--help"}
+
+	expectedOutput := HELP_MESSAGE
+	returnCode, output := runApp(args)
+
+	if returnCode != 0 {
+		t.Errorf("Expected return code 0, got %d", returnCode)
+	}
+
+	if output != expectedOutput {
+		fmt.Print(cmp.Diff(expectedOutput, output))
+		t.Error("Output is different from expected")
+	}
+
+}
 
 func TestListReport( t *testing.T ) {
-	returnCode, output := runApp()
+	returnCode, output := runApp([]string{})
 
 	if returnCode != 0 {
 		t.Errorf("Expected return code 0, got %d", returnCode)
@@ -126,6 +166,19 @@ func TestListReport( t *testing.T ) {
 	}
 }
 
-// TestLimitReport
+func TestLimitReport(t *testing.T) {
+	args := []string{"--limit", "2"}
+	expectedOutput := "exp1\t51200\nexp3\t40960\n"	
 
-// 
+	returnCode, output := runApp(args)
+
+	if returnCode != 0 {
+		t.Errorf("Expected return code 0, got %d", returnCode)
+	}
+
+	if output != expectedOutput {
+		fmt.Print(cmp.Diff(expectedOutput, output))
+		t.Error("Output is different from expected")
+	}
+}
+
