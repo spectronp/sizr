@@ -1,0 +1,10 @@
+Usage:
+  sizr [-n N | --limit N]
+  sizr -h | --help
+  sizr -v | --version
+
+Options:
+  -n --limit	Set the limit of packages to show (Default: 30)
+  -h --help	Show this help message
+  -v --version	Show sizr version
+
