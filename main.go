@@ -92,7 +92,7 @@ func Run(args []string) int {
 	flag := pflag.NewFlagSet("", 1)
 
 	helpWanted := flag.BoolP("help", "h", false, "Show this help message")
-	wantVersion := flag.BoolP("version", "v", false, "Show sizr version")	
+	wantVersion := flag.BoolP("version", "v", false, "Show sizr version")
 	reportLimit := flag.Uint8P("limit", "n", 30, "Set the limit of packages to show (Default: 30)")
 	flag.Parse(args)
 
@@ -102,9 +102,9 @@ func Run(args []string) int {
 	}
 	if *wantVersion {
 		fmt.Printf("sizr %s\n", VERSION)
-		return 0	
+		return 0
 	}
-	
+
 	data, _ := NewData(RunScript)
 	// CLI or TUI
 
