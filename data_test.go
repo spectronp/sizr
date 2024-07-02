@@ -8,7 +8,7 @@ import (
 	"github.com/google/go-cmp/cmp"
 )
 
-func mockRunner( script string, args ...string ) (output string, err error ) { // TODO -- refactor
+func mockRunner( script string, args ...string ) (output string, err error ) {
 	shell := "/usr/bin/bash"
 	path := "./tests/scripts-mock.sh"
 	pathAndArgs := append([]string{path, script}, args...)
@@ -48,19 +48,34 @@ func TestGetPackage(t *testing.T) {
 }
 
 func TestGetExplicit(t *testing.T) {
+	expectedPackages := map[string]Package{
+		"exp1": {
+			Name: "exp1",
+			Size: 10000,
+			IsExplicit: true,
+			Deps: []string{"rev1", "dep1", "rev4"},
+		},
+		"exp2": {
+			Name: "exp2",
+			Size: 10000,
+			IsExplicit: true,
+			Deps: []string{"dep13", "dep14", "rev4"},
+		},
+		"exp3": {
+			Name: "exp3",
+			Size: 10000,
+			IsExplicit: true,
+			Deps: []string{"dep11", "dep12"},
+		},
+	}
+
 	data, _ := NewData(mockRunner)
-	lenBefore := len(data.PackageList)	
 
-	explicitPackages := data.GetExplicit()
-	lenAfter := len(data.PackageList)
+	actualPackages := data.GetExplicit()
 
-	if len(explicitPackages) != 3 {
-		t.Errorf("Expected 3 packages, got %d", len(explicitPackages))
+	if ! cmp.Equal(expectedPackages, actualPackages) {
+		fmt.Print(cmp.Diff(expectedPackages, actualPackages))
+		t.Errorf("Returned packages are different than expected")
 	}
-
-	if lenBefore != lenAfter {
-		t.Errorf("Data have been modified, len before: %d, len after: %d", lenBefore, lenAfter)
-	}
-	// TODO -- compare both
 }
 // TODO -- test []Package
