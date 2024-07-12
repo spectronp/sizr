@@ -11,6 +11,9 @@ name=$( echo "$pacman_output" | grep '^Name' | tr -s ' ' | cut -d ' ' -f3 )
 install_reason=$( echo "$pacman_output" | grep '^Install Reason' | tr -s ' ' | cut -d ' ' -f4-)
 [ "$install_reason" = "Explicitly installed" ] && is_explicit="true" || is_explicit="false"
 
+# Version
+version=$( echo "$pacman_output" | grep '^Version' | tr -s ' ' | cut -d ' ' -f3 )
+
 # Size
 size_num=$( echo "$pacman_output" | grep '^Installed Size' | tr -s ' ' | cut -d ' ' -f4 )
 size_unit=$( echo "$pacman_output" | grep '^Installed Size' | tr -s ' ' | cut -d ' ' -f5)
@@ -35,6 +38,7 @@ deps=$( echo "$pacman_output" | grep '^Depends On' | tr -s ' ' | cut -d ' ' -f4-
 jq -rcnaM \
 	--arg name "$name" \
 	--argjson is_explicit "$is_explicit" \
+	--arg version "$version" \
 	--argjson size "$size" \
 	--argjson deps "[\"$deps\"]" \
-	'{"name":$name,"isExplicit":$is_explicit,"size":$size,"deps":$deps}'
+	'{"name":$name,"isExplicit":$is_explicit,"version": $version,"size":$size,"deps":$deps}'
