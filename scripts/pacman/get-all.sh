@@ -1,3 +1,3 @@
 #!/bin/sh
 
-pacman -Qq
+pacman -Q
