@@ -1,177 +1,205 @@
 {
   "exp1": {
     "isExplicit": true,
-    "size": 10000,
+    "size": 10240,
     "deps": [
       "rev1",
       "dep1",
       "rev4"
     ],
-    "name": "exp1"
+    "name": "exp1",
+    "version": "0.0.0"
   },
   "exp2": {
     "isExplicit": true,
-    "size": 10000,
+    "size": 10240,
     "deps": [
       "dep13",
       "dep14",
       "rev4"
     ],
-    "name": "exp2"
+    "name": "exp2",
+    "version": "0.0.0"
   },
   "exp3": {
     "isExplicit": true,
-    "size": 10000,
+    "size": 10240,
     "deps": [
       "dep11",
       "dep12"
     ],
-    "name": "exp3"
+    "name": "exp3",
+    "version": "0.0.0"
   },
   "rev1": {
     "isExplicit": false,
-    "size": 10000,
+    "size": 10240,
     "deps": [
       "dep2",
       "dep3"
     ],
-    "name": "rev1"
+    "name": "rev1",
+    "version": "0.0.0"
   },
   "dep1": {
     "isExplicit": false,
-    "size": 10000,
+    "size": 10240,
     "deps": [
       "rev2",
       "dep4"
     ],
-    "name": "dep1"
+    "name": "dep1",
+    "version": "0.0.0"
   },
   "rev4": {
     "isExplicit": false,
-    "size": 10000,
+    "size": 10240,
     "deps": [
       "dep16"
     ],
-    "name": "rev4"
+    "name": "rev4",
+    "version": "0.0.0"
   },
   "dep2": {
     "isExplicit": false,
-    "size": 10000,
+    "size": 10240,
     "deps": [],
-    "name": "dep2"
+    "name": "dep2",
+    "version": "0.0.0"
   },
   "dep3": {
     "isExplicit": false,
-    "size": 10000,
+    "size": 10240,
     "deps": [],
-    "name": "dep3"
+    "name": "dep3",
+    "version": "0.0.0"
   },
   "dep4": {
     "isExplicit": false,
-    "size": 10000,
+    "size": 10240,
     "deps": [
       "dep7",
       "dep8",
       "rev3"
     ],
-    "name": "dep4"
+    "name": "dep4",
+    "version": "0.0.0"
   },
   "dep16": {
     "isExplicit": false,
-    "size": 10000,
-    "deps": [],
-    "name": "dep16"
+    "size": 10240,
+    "deps": [
+      "dep13"
+    ],
+    "name": "dep16",
+    "version": "0.0.0"
   },
   "rev2": {
     "isExplicit": false,
-    "size": 10000,
+    "size": 10240,
     "deps": [
       "dep5",
       "dep6"
     ],
-    "name": "rev2"
+    "name": "rev2",
+    "version": "0.0.0"
   },
   "dep7": {
     "isExplicit": false,
-    "size": 10000,
+    "size": 10240,
     "deps": [],
-    "name": "dep7"
+    "name": "dep7",
+    "version": "0.0.0"
   },
   "dep8": {
     "isExplicit": false,
-    "size": 10000,
+    "size": 10240,
     "deps": [],
-    "name": "dep8"
+    "name": "dep8",
+    "version": "0.0.0"
   },
   "rev3": {
     "isExplicit": false,
-    "size": 10000,
+    "size": 10240,
     "deps": [
       "dep9",
       "dep10"
     ],
-    "name": "rev3"
+    "name": "rev3",
+    "version": "0.0.0"
   },
   "dep9": {
     "isExplicit": false,
-    "size": 10000,
+    "size": 10240,
     "deps": [],
-    "name": "dep9"
+    "name": "dep9",
+    "version": "0.0.0"
   },
   "dep10": {
     "isExplicit": false,
-    "size": 10000,
+    "size": 10240,
     "deps": [],
-    "name": "dep10"
+    "name": "dep10",
+    "version": "0.0.0"
   },
   "dep5": {
     "isExplicit": false,
-    "size": 10000,
+    "size": 10240,
     "deps": [],
-    "name": "dep5"
+    "name": "dep5",
+    "version": "0.0.0"
   },
   "dep6": {
     "isExplicit": false,
-    "size": 10000,
+    "size": 10240,
     "deps": [],
-    "name": "dep6"
+    "name": "dep6",
+    "version": "0.0.0"
   },
   "dep11": {
     "isExplicit": false,
-    "size": 10000,
+    "size": 10240,
     "deps": [
-      "dep15"
+      "dep15",
+      "dep13"
     ],
-    "name": "dep11"
+    "name": "dep11",
+    "version": "0.0.0"
   },
   "dep12": {
     "isExplicit": false,
-    "size": 10000,
+    "size": 10240,
     "deps": [
       "rev2"
     ],
-    "name": "dep12"
+    "name": "dep12",
+    "version": "0.0.0"
   },
   "dep13": {
     "isExplicit": false,
-    "size": 10000,
-    "deps": [],
-    "name": "dep13"
+    "size": 10240,
+    "deps": [
+      "dep16"
+    ],
+    "name": "dep13",
+    "version": "0.0.0"
   },
   "dep14": {
     "isExplicit": false,
-    "size": 10000,
+    "size": 10240,
     "deps": [
       "rev1"
     ],
-    "name": "dep14"
+    "name": "dep14",
+    "version": "0.0.0"
   },
   "dep15": {
     "isExplicit": false,
-    "size": 10000,
+    "size": 10240,
     "deps": [
       "rev3"
     ],
-    "name": "dep15"
+    "name": "dep15",
+    "version": "0.0.0"
   }
 }
