@@ -101,6 +101,11 @@ func TestOrderBySum(t *testing.T) {
 
 // E2E Tests
 
+func removeProgressBar(output string) string {
+	_, outputWithoutBar, _ := strings.Cut(output, "@END_PROGRESSBAR@\n")
+	return outputWithoutBar
+}
+
 func runApp(args []string) (int, string) {
 	args = append([]string{"sizr"}, args...)
 
