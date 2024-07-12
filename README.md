@@ -14,7 +14,7 @@ sizr -h | --help
 - Pacman ( sum size of installed optional dependencies )
 - Human Readable sizes
 
-## TODO
+## Todo
 
 - Ignore Essential packages from debian based distros
 - Use generated packages for benchmark only ???
