@@ -81,7 +81,7 @@ pacman_output() {
 declare cmd
 for cmd_type in "${cmd_types[@]}"
 do
-    cmd_ref="${package_manager}_" # TODO -- im adding this and not using it at the last line
+    cmd_ref="${package_manager}_"
     cmd_ref+="$cmd_type"
 
     if [[ "$cmd_type" == 'info' ]]
