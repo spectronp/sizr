@@ -6,11 +6,14 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
+
+	"github.com/schollz/progressbar/v3"
 )
 
 type Package struct { // TODO -- make fields exported and immutable
 	Name string
 	IsExplicit bool
+	Version string
 	Size uint
 	Deps []string // NOTE -- change this to []*Package or map[string]*Packge ?
 }
@@ -32,18 +35,10 @@ func NewData(runner ScriptRunner) (data Data, err error) {
 	return Data{Manager: manager, PackageList: packageList}, err
 } 
 
-func getPackages(manager string, runner ScriptRunner) map[string]Package {
-	// TODO -- cache system
-
-	packages := make(map[string]Package)
-	raw_result, err := runner(manager + "/get-all")
-	if err != nil {
-		fmt.Printf("Error on getPackages: %s \n", err)
-	}
-	packagesNames := strings.Fields(raw_result)
-	for _, pack := range packagesNames {
+func getPackageInfoWorker(packageNames <-chan string, returnedPacks chan<- Package, runner ScriptRunner, manager string) {
+	for packName := range packageNames {
 		var newPack Package	
-		packageJson, err := runner(manager + "/info", pack)
+		packageJson, err := runner(manager + "/info", packName)
 		if err != nil {
 			fmt.Printf("Error on running info.sh: %s\n", err)
 		}
@@ -51,8 +46,60 @@ func getPackages(manager string, runner ScriptRunner) map[string]Package {
 		if err != nil {
 			fmt.Printf("Error on Unmarshal: %s\n", err)
 		}
-		packages[newPack.Name] = newPack
+		returnedPacks <- newPack	
 	}
+}
+
+func getPackages(manager string, runner ScriptRunner) map[string]Package {
+	// TODO -- cache system
+
+	packages := make(map[string]Package)
+	raw_result, err := runner(manager + "/get-all")
+	if err != nil {
+		fmt.Printf("Error on getPackages: %s \n", err) // TODO -- use log for errors
+	}
+	packagesInfo := strings.Split(raw_result, "\n")
+
+	DB := DB.Load()
+
+	// check for names in the DB and get packages that need to be updated
+	upTodate, outOfDate, err := DB.Check(packagesInfo)
+	for pack := range upTodate {
+		packages[pack.Name] = pack
+	}
+
+	packagesCount := len(outOfDate)
+	
+	namesChannel := make(chan string, packagesCount)
+	packagesChannel := make(chan Package, packagesCount)
+
+	workerCount := 6
+	for w := 1; w <= workerCount; w++ {
+		go getPackageInfoWorker(namesChannel, packagesChannel, runner, manager)	
+	}
+
+	for _, packageName := range outOfDate {
+		namesChannel <- packageName
+	}
+	close(namesChannel)
+	
+	bar := progressbar.NewOptions(packagesCount,
+		progressbar.OptionClearOnFinish(),
+		progressbar.OptionShowCount(),
+	)
+
+	for w := 1; w <= packagesCount; w++ { // NOTE -- should the progress bar output be here or in the main.go ?
+		newPack := <-packagesChannel
+		packages[newPack.Name] = newPack
+		bar.Add(1)
+	} 
+
+	if ENV == "testing" {
+		fmt.Println("@END_PROGRESSBAR@")	
+	}
+
+	DB.Update(packages, outOfDate)
+	
 	return packages
 }
 

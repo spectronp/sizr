@@ -39,7 +39,7 @@ func TestManagerIsSet(t *testing.T) {
 func TestGetPackage(t *testing.T) {
 	data, _ := NewData(mockRunner)
 	
-	expectedPackage := Package{Name: "exp1", Size: 10000, IsExplicit: true, Deps: []string{"rev1", "dep1", "rev4"}}
+	expectedPackage := Package{Name: "exp1", Size: 10240, IsExplicit: true, Version: "0.0.0", Deps: []string{"rev1", "dep1", "rev4"}}
 
 	if ! cmp.Equal(data.GetPackage("exp1"), expectedPackage) {
 		diff := cmp.Diff(data.GetPackage("exp1"), expectedPackage)
@@ -51,20 +51,23 @@ func TestGetExplicit(t *testing.T) {
 	expectedPackages := map[string]Package{
 		"exp1": {
 			Name: "exp1",
-			Size: 10000,
+			Size: 10240,
 			IsExplicit: true,
+			Version: "0.0.0",
 			Deps: []string{"rev1", "dep1", "rev4"},
 		},
 		"exp2": {
 			Name: "exp2",
-			Size: 10000,
+			Size: 10240,
 			IsExplicit: true,
+			Version: "0.0.0",
 			Deps: []string{"dep13", "dep14", "rev4"},
 		},
 		"exp3": {
 			Name: "exp3",
-			Size: 10000,
+			Size: 10240,
 			IsExplicit: true,
+			Version: "0.0.0",
 			Deps: []string{"dep11", "dep12"},
 		},
 	}
@@ -78,4 +81,4 @@ func TestGetExplicit(t *testing.T) {
 		t.Errorf("Returned packages are different than expected")
 	}
 }
-// TODO -- test []Package
+
