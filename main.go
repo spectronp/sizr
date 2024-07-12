@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"maps"
 	"os"
 	"sort"
 
@@ -12,41 +11,42 @@ import (
 var (
 	VERSION string
 	HELP_MESSAGE string
+	ENV string
 )
 
 // TODO -- use concurrency | paralelism
-func calcSize(pack string, data Data) uint {
+func calcSize(pack string, data *Data) uint {
 	target := data.GetPackage(pack)
-	explictPackages := data.GetExplicit() // TODO -- fix typo explict to explicit
+	explictPackages := data.GetExplicit()
 	delete(explictPackages, pack)
 
 	depsToIgnore := make(map[string]Package) // NOTE -- could I use map[string]bool ?
 	for _, explicitPack := range explictPackages {
-		maps.Copy(depsToIgnore, listTree(explicitPack, data))
+		listTree(explicitPack, depsToIgnore, data)
 	} 
 	return sumSize(target, depsToIgnore, data)
 }
 
-func listTree(target Package, data Data) map[string]Package {
-	finalMap := make(map[string]Package)
-
+func listTree(target Package, depsToIgnore map[string]Package, data *Data) {
 	for _, packName := range target.Deps {
 		pack := data.GetPackage(packName)
-		finalMap[pack.Name] = pack
+		if _, alreadyInList := depsToIgnore[packName]; alreadyInList {
+			continue
+		} 
+		depsToIgnore[pack.Name] = pack // this can add an already added package and run another branch of listTree
 
-		maps.Copy(finalMap, listTree(pack, data))
+		listTree(pack, depsToIgnore, data)
 	}
-	return finalMap
 }
 
 /*
 	NOTE -- maybe use listTree first with an ignorePackages parameter and then iterate the list doing the sum ?
 */
-func sumSize(start Package, ignorePackages map[string]Package, data Data) uint {
+func sumSize(start Package, ignorePackages map[string]Package, data *Data) uint {
 	totalSize := start.Size
 
 	for _, packName := range start.Deps {
-		if (ignorePackages[packName].Name == packName){ // TODO -- refactor this line
+		if _, shouldBeIgnored := ignorePackages[packName]; shouldBeIgnored {
 			continue
 		}
 		pack := data.GetPackage(packName)
@@ -60,7 +60,7 @@ type PackageNameWithSum struct {
 	Size uint
 }
 
-func orderBySumSize(data Data) []PackageNameWithSum {
+func orderBySumSize(data *Data) []PackageNameWithSum {
 	explicitPackages := data.GetExplicit()	
 	orderedPacks := []PackageNameWithSum{}
 	for _, pack := range explicitPackages {
@@ -79,16 +79,35 @@ func orderBySumSize(data Data) []PackageNameWithSum {
 
 func report(packages []PackageNameWithSum, limit uint8) {
 	// TODO -- display human readable size
-	var i uint8
-	for i = 0; i < limit; i++ {
-		if i >= uint8(len(packages)) {
-			break
+	var limitedPackages []PackageNameWithSum
+	if uint8(len(packages)) > limit {
+		limitedPackages = packages[:limit]
+	} else {
+		limitedPackages = packages
+	}
+	
+	longestPackageName := 0
+	for _, pack := range limitedPackages {
+		runeCount := len([]rune(pack.Name))
+		if runeCount > longestPackageName {
+			longestPackageName = runeCount
 		}
-		fmt.Printf("%s\t%d\n", packages[i].Name, packages[i].Size)
+	}
+	
+	for _, pack := range limitedPackages {
+		gapNum := 5 + ( longestPackageName - len([]rune(pack.Name)) )
+		gapString := ""
+		for i := gapNum; i > 0; i-- {
+			gapString += " "	
+		}
+
+		fmt.Printf("%s%s%d\n", pack.Name, gapString, pack.Size)
 	}
 }
 
 func Run(args []string) int {
+	ENV = os.Getenv("SIZR_ENV")
+
 	flag := pflag.NewFlagSet("", 1)
 
 	helpWanted := flag.BoolP("help", "h", false, "Show this help message")
@@ -108,7 +127,7 @@ func Run(args []string) int {
 	data, _ := NewData(RunScript)
 	// CLI or TUI
 
-	report(orderBySumSize(data), *reportLimit)
+	report(orderBySumSize(&data), *reportLimit)
 
 	return 0
 }

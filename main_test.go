@@ -5,6 +5,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
@@ -30,19 +31,29 @@ func TestListTree(t *testing.T)  {
 		Name: "exp3",
 		IsExplicit: true,
 		Size: 10240,
+		Version: "0.0.0",
 		Deps: []string{"dep11", "dep12"},
 	}
+	depsToIgnore := map[string]Package{
+		"dep13": {
+			Name: "dep13",
+			Size: 10240,
+			IsExplicit: false,
+			Version: "0.0.0",
+			Deps: []string{"dep16"},
+		},
+	}
 
-	expectedList := []string{"dep11", "dep12", "dep15", "rev2", "rev3", "dep5", "dep6", "dep9", "dep10"}
+	expectedList := []string{"dep13", "dep11", "dep12", "dep15", "rev2", "rev3", "dep5", "dep6", "dep9", "dep10"}
 	expectedPackages := map[string]Package{}
 
 	for _, name := range expectedList {
 		expectedPackages[name] = data.GetPackage(name)
 	}
 
-	receivedPackages := listTree(firstPack, data)
-	if ! cmp.Equal(expectedPackages, receivedPackages) {
-		fmt.Println(cmp.Diff(expectedPackages, receivedPackages))
+	listTree(firstPack, depsToIgnore, &data) // TODO -- assert it ignores the packages from second arg
+	if ! cmp.Equal(expectedPackages, depsToIgnore) {
+		fmt.Println(cmp.Diff(expectedPackages, depsToIgnore))
 		t.Error("listTree function returned something different from expected")
 	}
 }
@@ -57,8 +68,8 @@ func TestSumSize(t *testing.T) {
 		ignoredPacakges[ignoredName] = data.GetPackage(ignoredName)	
 	}
 
-	expectedSize := uint(50000)
-	actualSize := sumSize(start, ignoredPacakges, data)
+	expectedSize := uint(51200)
+	actualSize := sumSize(start, ignoredPacakges, &data)
 
 	if expectedSize != actualSize {
 		t.Errorf("Expected size %d, got size %d", expectedSize, actualSize)	
@@ -66,8 +77,8 @@ func TestSumSize(t *testing.T) {
 }
 
 func TestCalcSize(t *testing.T) {
-	expectedSize := 50000
-	actualSize := calcSize("exp1", data)
+	expectedSize := 51200
+	actualSize := calcSize("exp1", &data)
 	
 	if actualSize != uint(expectedSize) {
 		t.Errorf("Expected size %d, got size %d", expectedSize, actualSize)
@@ -76,11 +87,11 @@ func TestCalcSize(t *testing.T) {
 
 func TestOrderBySum(t *testing.T) {
 	expectedPackages := []PackageNameWithSum{
-		{Name: "exp1", Size: 50000},
-		{Name: "exp3", Size: 40000},
-		{Name: "exp2", Size: 30000},
+		{Name: "exp1", Size: 51200},
+		{Name: "exp3", Size: 40960},
+		{Name: "exp2", Size: 20480},
 	}
-	actualPackages := orderBySumSize(data)	
+	actualPackages := orderBySumSize(&data)	
 
 	if ! cmp.Equal(expectedPackages, actualPackages) {
 		fmt.Println(cmp.Diff(expectedPackages, actualPackages))
@@ -122,8 +133,7 @@ func runApp(args []string) (int, string) {
 func TestVersionOutput(t *testing.T) {
 	args := []string{"--version"}
 
-	expectedOutput := "sizr v0.1\n" // TODO -- get this automatticaly
-
+	expectedOutput := fmt.Sprintf("sizr %s\n", VERSION)
 	returnCode, output := runApp(args)
 
 	if returnCode != 0 {
@@ -154,12 +164,13 @@ func TestHelpOutput(t *testing.T) {
 
 func TestListReport( t *testing.T ) {
 	returnCode, output := runApp([]string{})
+	output = removeProgressBar(output)
 
 	if returnCode != 0 {
 		t.Errorf("Expected return code 0, got %d", returnCode)
 	}
 	
-	expectedOutput := "exp1\t51200\nexp3\t40960\nexp2\t30720\n"
+	expectedOutput := "exp1     51200\nexp3     40960\nexp2     20480\n"
 	if output != expectedOutput {
 		fmt.Print(cmp.Diff(expectedOutput, output))
 		t.Error("Output is different from the expected")
@@ -168,9 +179,10 @@ func TestListReport( t *testing.T ) {
 
 func TestLimitReport(t *testing.T) {
 	args := []string{"--limit", "2"}
-	expectedOutput := "exp1\t51200\nexp3\t40960\n"	
+	expectedOutput := "exp1     51200\nexp3     40960\n"	
 
 	returnCode, output := runApp(args)
+	output = removeProgressBar(output)
 
 	if returnCode != 0 {
 		t.Errorf("Expected return code 0, got %d", returnCode)
