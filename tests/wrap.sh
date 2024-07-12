@@ -10,6 +10,6 @@ cp tests/pm_mock.sh "bin/pacman"
 # set PATH
 PATH="$BASEDIR/bin:$PATH"
 # run go test
-env BASEDIR="$BASEDIR" go test "$@"
+env BASEDIR="$BASEDIR" SIZR_ENV=testing go test "$@"
 
 rm -rf bin
