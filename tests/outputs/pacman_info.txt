@@ -1,5 +1,5 @@
 Name            : {name}
-Version         : 0.0.0-0
+Version         : 0.0.0
 Description     : foo bar
 Architecture    : any
 URL             : https://example.com
