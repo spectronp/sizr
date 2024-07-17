@@ -1,6 +1,10 @@
-package main
+package data
 
 import (
+	"github.com/spectronp/sizr/db"
+	"github.com/spectronp/sizr/types"
+	"github.com/spectronp/sizr/vars"
+
 	"encoding/json"
 	"fmt"
 	"os/exec"
@@ -10,18 +14,11 @@ import (
 	"github.com/schollz/progressbar/v3"
 )
 
-type Package struct { // TODO -- make fields exported and immutable
-	Name string
-	IsExplicit bool
-	Version string
-	Size uint
-	Deps []string // NOTE -- change this to []*Package or map[string]*Packge ?
-}
 
 
 type Data struct {
 	Manager string
-	PackageList map[string]Package // NOTE -- change name to Packages or PackageMap ? | Should this be private ?
+	PackageList map[string]types.Package // NOTE -- change name to Packages or PackageMap ? | Should this be private ?
 }
 
 type ScriptRunner func(script string, args ...string) (output string, err error)
@@ -35,9 +32,9 @@ func NewData(runner ScriptRunner) (data Data, err error) {
 	return Data{Manager: manager, PackageList: packageList}, err
 } 
 
-func getPackageInfoWorker(packageNames <-chan string, returnedPacks chan<- Package, runner ScriptRunner, manager string) {
+func getPackageInfoWorker(packageNames <-chan string, returnedPacks chan<- types.Package, runner ScriptRunner, manager string) {
 	for packName := range packageNames {
-		var newPack Package	
+		var newPack types.Package	
 		packageJson, err := runner(manager + "/info", packName)
 		if err != nil {
 			fmt.Printf("Error on running info.sh: %s\n", err)
@@ -50,28 +47,29 @@ func getPackageInfoWorker(packageNames <-chan string, returnedPacks chan<- Packa
 	}
 }
 
-func getPackages(manager string, runner ScriptRunner) map[string]Package {
+func getPackages(manager string, runner ScriptRunner) map[string]types.Package {
 	// TODO -- cache system
 
-	packages := make(map[string]Package)
+	packages := make(map[string]types.Package)
 	raw_result, err := runner(manager + "/get-all")
 	if err != nil {
 		fmt.Printf("Error on getPackages: %s \n", err) // TODO -- use log for errors
 	}
 	packagesInfo := strings.Split(raw_result, "\n")
 
-	DB := DB.Load()
+	DB := db.Load()
+	defer DB.Close()
 
 	// check for names in the DB and get packages that need to be updated
-	upTodate, outOfDate, err := DB.Check(packagesInfo)
-	for pack := range upTodate {
+	upToDate, outOfDate, deleted := DB.Check(packagesInfo)
+	for _, pack := range upToDate {
 		packages[pack.Name] = pack
 	}
 
 	packagesCount := len(outOfDate)
 	
 	namesChannel := make(chan string, packagesCount)
-	packagesChannel := make(chan Package, packagesCount)
+	packagesChannel := make(chan types.Package, packagesCount)
 
 	workerCount := 6
 	for w := 1; w <= workerCount; w++ {
@@ -87,29 +85,35 @@ func getPackages(manager string, runner ScriptRunner) map[string]Package {
 		progressbar.OptionClearOnFinish(),
 		progressbar.OptionShowCount(),
 	)
-
+	
+	updateOnDB := []types.Package{}
 	for w := 1; w <= packagesCount; w++ { // NOTE -- should the progress bar output be here or in the main.go ?
 		newPack := <-packagesChannel
 		packages[newPack.Name] = newPack
+		updateOnDB = append(updateOnDB, newPack)
 		bar.Add(1)
 	} 
 
-	if ENV == "testing" {
+	if vars.ENV == "testing" {
 		fmt.Println("@END_PROGRESSBAR@")	
 	}
 
-	DB.Update(packages, outOfDate)
+	for _, deletedName := range deleted {
+		updateOnDB = append(updateOnDB, types.Package{Name: deletedName})
+	}
+
+	DB.Update(updateOnDB...)
 	
 	return packages
 }
 
-func (d Data) GetPackage(name string) Package  {
+func (d Data) GetPackage(name string) types.Package  {
 	pack := d.PackageList[name]
 	return pack
 }
 
-func (d Data) GetExplicit() map[string]Package { // TODO -- try to use map[string]*Package
-	explicit := make(map[string]Package)
+func (d Data) GetExplicit() map[string]types.Package { // TODO -- try to use map[string]*Package
+	explicit := make(map[string]types.Package)
 
 	for _, pack := range d.PackageList {
 		if pack.IsExplicit {
