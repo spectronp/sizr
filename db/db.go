@@ -10,16 +10,24 @@ import (
 	"github.com/spectronp/sizr/vars"
 
 	"encoding/json"
-) 
+)
+
 type DB struct {
-	keyMap map[string]types.Package
+	keyMap     map[string]types.Package
 	pointerMap map[string]string
 }
 
 func Load() DB {
 	jsonFile, err := os.ReadFile(vars.DB_FILE)
+
+	if os.IsNotExist(err) {
+		jsonFile = []byte("{}")
+		os.WriteFile(vars.DB_FILE, jsonFile, 0644)
+		err = nil
+	}
+
 	if err != nil {
-		panic("error reading DB file")
+		panic(err)
 	}
 
 	var localKeyMap map[string]types.Package
@@ -32,7 +40,7 @@ func Load() DB {
 	}
 
 	return DB{
-		keyMap: localKeyMap,
+		keyMap:     localKeyMap,
 		pointerMap: localPointerMap,
 	}
 }
@@ -42,7 +50,7 @@ func (db DB) Close() {
 	if err != nil {
 		panic("error on json.Marshal() for db")
 	}
-	os.WriteFile(vars.DB_FILE, jsonData, 0644)	
+	os.WriteFile(vars.DB_FILE, jsonData, 0644)
 }
 
 func (db DB) Check(packagesKey []string) (upToDate []types.Package, outOfDate []string, deleted []string) {
@@ -59,7 +67,7 @@ func (db DB) Check(packagesKey []string) (upToDate []types.Package, outOfDate []
 		} else {
 			outOfDate = append(outOfDate, pack.Name)
 		}
-	}	
+	}
 
 	for deletedName := range deletedMap {
 		deleted = append(deleted, deletedName)
@@ -71,10 +79,10 @@ func (db DB) Check(packagesKey []string) (upToDate []types.Package, outOfDate []
 func (db DB) Update(updated ...types.Package) {
 	for _, pack := range updated {
 		if cmp.Equal(pack, types.Package{Name: pack.Name}) {
-			packKey := db.pointerMap[pack.Name]	
+			packKey := db.pointerMap[pack.Name]
 			delete(db.pointerMap, pack.Name)
 			delete(db.keyMap, packKey)
-			
+
 			continue
 		}
 
@@ -82,6 +90,6 @@ func (db DB) Update(updated ...types.Package) {
 		newPackKey := fmt.Sprintf("%s %s", pack.Name, pack.Version)
 		delete(db.keyMap, oldPackKey)
 		db.keyMap[newPackKey] = pack
-		db.pointerMap[pack.Name] = newPackKey  
+		db.pointerMap[pack.Name] = newPackKey
 	}
 }
