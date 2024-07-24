@@ -13,8 +13,8 @@ import (
 )
 
 type DB struct {
-	keyMap     map[string]types.Package
-	pointerMap map[string]string
+	keyMap     map[string]types.Package // "packName Version": Package
+	pointerMap map[string]string        // "packName": "packName Version"
 }
 
 func Load() DB {
@@ -65,7 +65,9 @@ func (db DB) Check(packagesKey []string) (upToDate []types.Package, outOfDate []
 			upToDate = append(upToDate, pack)
 			delete(deletedMap, pack.Name)
 		} else {
-			outOfDate = append(outOfDate, pack.Name)
+			packName := strings.Split(key, " ")[0]
+			outOfDate = append(outOfDate, packName)
+			delete(deletedMap, packName)
 		}
 	}
 
