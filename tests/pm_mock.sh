@@ -11,7 +11,7 @@ apt_list='apt-mark showmanual'
 
 dpkg_info="dpkg-query -f \${Package} \${Installed-Size} \${Pre-Depends},\${Depends} -W"
 
-pacman_list='pacman -Qq'
+pacman_list='pacman -Q'
 pacman_info='pacman -Qi'
 
 package_manager=$( echo "${0##*/}" | grep -Eo '^[a-z]+' )
@@ -61,16 +61,16 @@ pacman_output() {
     cmd_type="$1"
     case "$cmd_type" in
         'list')
-            jq -r '.[] | .name' "$packages_file"
+            jq -r '.[] | .name as $name | .version as $version | "\($name) \($version)"' "$packages_file"
             ;;
         'info')
             package_name="$3"
             package_size="10 KiB"
             # package_size=$(jq -r ".$package_name.size" "$packages_file")
             # package_size=$(to_human_readable $package_size)
-            
+
             # TODO -- make this more readable
-            deps=$(jq -r "reduce .$package_name.deps[] as \$dep (\"\"; . + \" \" + \$dep )" "$packages_file") # NOTE -- not sure if it works
+            deps=$(jq -r "reduce .$package_name.deps[] as \$dep (\"\"; . + \" \" + \$dep )" "$packages_file")
             package_type=$(jq -r ".$package_name.isExplicit" "$packages_file")
             [[ "$package_type" == "true" ]] && package_type="Explicitly installed" || package_type="Installed as a dependency for another package"
             cat "$BASEDIR/tests/outputs/pacman_info.txt" | sed "s/{name}/$package_name/;s/{deps}/$deps/;s/{size}/$package_size/;s/{package_type}/$package_type/"
