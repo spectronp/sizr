@@ -125,4 +125,36 @@ func TestCheck(t *testing.T) {
 	}
 }
 
-// TestUpdate
+func TestUpdate(t *testing.T) {
+	db := Load()
+
+	exp2Pack := types.Package{
+		Name:       "exp2",
+		Version:    "0.0.1",
+		IsExplicit: true,
+		Size:       10240,
+	}
+	updated := []types.Package{
+		exp2Pack,
+		{
+			Name: "exp3", // Deleted package
+		},
+	}
+
+	expectedPackages := loadPackagesJson(t, packagesJson)
+	expectedPackages["exp2 0.0.1"] = exp2Pack
+	delete(expectedPackages, "exp2 0.0.0")
+	delete(expectedPackages, "exp3 0.0.0")
+
+	db.Update(updated...)
+
+	vars.DB_FILE = tmpPackagesJson
+	db.Close()
+	vars.DB_FILE = packagesJson
+
+	actualPackages := loadPackagesJson(t, tmpPackagesJson)
+
+	if !cmp.Equal(expectedPackages, actualPackages) {
+		t.Errorf("Packaged are different from expected: %s", cmp.Diff(expectedPackages, actualPackages))
+	}
+}
