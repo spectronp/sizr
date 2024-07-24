@@ -10,7 +10,6 @@ import (
 	"io"
 	"log"
 	"os"
-	"strings"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
@@ -106,11 +105,6 @@ func TestOrderBySum(t *testing.T) {
 
 // E2E Tests
 
-func removeProgressBar(output string) string {
-	_, outputWithoutBar, _ := strings.Cut(output, "@END_PROGRESSBAR@\n")
-	return outputWithoutBar
-}
-
 func runApp(args []string) (int, string) {
 	args = append([]string{"sizr"}, args...)
 
@@ -173,7 +167,6 @@ func TestHelpOutput(t *testing.T) {
 
 func TestListReport(t *testing.T) {
 	returnCode, output := runApp([]string{})
-	output = removeProgressBar(output)
 
 	if returnCode != 0 {
 		t.Errorf("Expected return code 0, got %d", returnCode)
@@ -191,7 +184,6 @@ func TestLimitReport(t *testing.T) {
 	expectedOutput := "exp1     51200\nexp3     40960\n"
 
 	returnCode, output := runApp(args)
-	output = removeProgressBar(output)
 
 	if returnCode != 0 {
 		t.Errorf("Expected return code 0, got %d", returnCode)
