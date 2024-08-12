@@ -27,6 +27,7 @@ func TestMain(m *testing.M) {
 	HELP_MESSAGE = string(helpBytes)
 
 	vars.DB_FILE = "/tmp/sizr_db"
+	defer os.Remove("/tmp/sizr_db")
 
 	mockData, _ = data.NewData(helpers.MockRunner) // NOTE -- if Data is broken, this data will break this tests too ( data is used more along the file )
 	m.Run()
@@ -106,6 +107,9 @@ func TestOrderBySum(t *testing.T) {
 // E2E Tests
 
 func runApp(args []string) (int, string) {
+	// reset DB
+	os.Remove(vars.DB_FILE) // NOTE -- This is needed because "defer os.Remove()" call on TestMain is not running, check later
+
 	args = append([]string{"sizr"}, args...)
 
 	pipeReader, pipeWriter, err := os.Pipe()
