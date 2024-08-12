@@ -30,9 +30,10 @@ func TestGetPackage(t *testing.T) {
 	data, _ := NewData(helpers.MockRunner)
 
 	expectedPackage := types.Package{Name: "exp1", Size: 10240, IsExplicit: true, Version: "0.0.0", Deps: []string{"rev1", "dep1", "rev4"}}
+	actualPackage := data.GetPackage("exp1")
 
-	if !cmp.Equal(data.GetPackage("exp1"), expectedPackage) {
-		diff := cmp.Diff(data.GetPackage("exp1"), expectedPackage)
+	if !cmp.Equal(actualPackage, expectedPackage) {
+		diff := cmp.Diff(actualPackage, expectedPackage)
 		t.Errorf("Package exp1 is not what was expected\n%s", diff)
 	}
 }
