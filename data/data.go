@@ -17,7 +17,7 @@ import (
 
 type Data struct {
 	Manager     string
-	PackageList map[string]types.Package // NOTE -- change name to Packages or PackageMap ? | Should this be private ?
+	PackageList map[string]types.Package // NOTE -- Should this be private ?
 }
 
 type ScriptRunner func(script string, args ...string) (output string, err error)
@@ -50,7 +50,7 @@ func getPackages(manager string, runner ScriptRunner) map[string]types.Package {
 	packages := make(map[string]types.Package)
 	raw_result, err := runner(manager + "/get-all")
 	if err != nil {
-		fmt.Printf("Error on getPackages: %s \n", err) // TODO -- use log for errors
+		log.Fatalf("Error on getPackages: %s \n", err)
 	}
 	packagesInfo := strings.Split(raw_result, "\n")
 	packagesInfo = packagesInfo[:len(packagesInfo)-1]
@@ -90,7 +90,7 @@ func getPackages(manager string, runner ScriptRunner) map[string]types.Package {
 	)
 
 	updateOnDB := []types.Package{}
-	for w := 1; w <= packagesCount; w++ { // NOTE -- should the progress bar output be here or in the main.go ?
+	for w := 1; w <= packagesCount; w++ {
 		newPack := <-packagesChannel
 		packages[newPack.Name] = newPack
 		updateOnDB = append(updateOnDB, newPack)
@@ -111,7 +111,7 @@ func (d Data) GetPackage(name string) types.Package {
 	return pack
 }
 
-func (d Data) GetExplicit() map[string]types.Package { // TODO -- try to use map[string]*Package
+func (d Data) GetExplicit() map[string]types.Package { // NOTE -- should use map[string]*Package ?
 	explicit := make(map[string]types.Package)
 
 	for _, pack := range d.PackageList {
