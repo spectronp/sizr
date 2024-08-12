@@ -8,10 +8,9 @@ import (
 )
 
 func MockRunner(script string, args ...string) (output string, err error) {
-	shell := "/usr/bin/bash" // TODO -- run scripts-mock directly
-	path := vars.BASEDIR + "/tests/scripts-mock.sh"
-	pathAndArgs := append([]string{path, script}, args...)
-	cmd := exec.Command(shell, pathAndArgs...)
+	scriptsMock := vars.BASEDIR + "/tests/scripts-mock.sh"
+	scriptAndArgs := append([]string{script}, args...)
+	cmd := exec.Command(scriptsMock, scriptAndArgs...)
 	stdout, err := cmd.Output()
 	if err != nil {
 		fmt.Printf("Error on MockRunner: %s", err)
