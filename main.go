@@ -136,6 +136,6 @@ func Run(args []string) int {
 }
 
 func main() {
-	Run(os.Args)
-	// NOTE -- use os.Exit() with return code here ?
+	statusCode := Run(os.Args)
+	os.Exit(statusCode)
 }

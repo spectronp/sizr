@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-packages_file="$BASEDIR/tests/packages.json" # NOTE -- this is a workaround
+packages_file="$BASEDIR/tests/packages.json"
 
 cmd_types=('list' 'info')
 
