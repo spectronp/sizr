@@ -11,7 +11,7 @@ import (
 )
 
 func TestCanBuildData(t *testing.T) {
-	_, err := NewData(helpers.MockRunner) // NOTE -- do this inside InitMain ?
+	_, err := NewData(helpers.MockRunner) // NOTE: do this inside InitMain ?
 
 	if err != nil {
 		t.Error("Data could not be built: ", err)

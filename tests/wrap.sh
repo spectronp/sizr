@@ -1,6 +1,6 @@
 #!/bin/sh
 
-BASEDIR=$( cd "$(dirname "$0")"; cd ..; pwd ) # TODO -- see if I can do this better
+BASEDIR=$( cd "$(dirname "$0")"; cd ..; pwd ) # TODO: see if I can do this better
 cd "$BASEDIR"
 
 # put pm_mock.sh into a bin dir for each package manager

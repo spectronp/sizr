@@ -17,13 +17,12 @@ var (
 	ENV          string
 )
 
-// TODO -- use concurrency | paralelism
 func calcSize(pack string, dataObj *data.Data) uint {
 	target := dataObj.GetPackage(pack)
 	explictPackages := dataObj.GetExplicit()
 	delete(explictPackages, pack)
 
-	depsToIgnore := make(map[string]types.Package) // NOTE -- could I use map[string]bool ?
+	depsToIgnore := make(map[string]types.Package) // NOTE: could I use map[string]bool ?
 	for _, explicitPack := range explictPackages {
 		listTree(explicitPack, depsToIgnore, dataObj)
 	}
@@ -43,7 +42,7 @@ func listTree(target types.Package, depsToIgnore map[string]types.Package, dataO
 }
 
 /*
-NOTE -- maybe use listTree first with an ignorePackages parameter and then iterate the list doing the sum ?
+NOTE: maybe use listTree first with an ignorePackages parameter and then iterate the list doing the sum ?
 */
 func sumSize(start types.Package, ignorePackages map[string]types.Package, dataObj *data.Data) uint {
 	totalSize := start.Size
@@ -74,14 +73,14 @@ func orderBySumSize(dataObj *data.Data) []PackageNameWithSum {
 			orderedPacks = append(orderedPacks, PackageNameWithSum{Name: pack.Name, Size: packSize})
 			continue
 		}
-		orderedPacks = append(orderedPacks[:insertIndex+1], orderedPacks[insertIndex:]...) // NOTE -- should i make more readable ?
+		orderedPacks = append(orderedPacks[:insertIndex+1], orderedPacks[insertIndex:]...) // NOTE: should i make more readable ?
 		orderedPacks[insertIndex] = PackageNameWithSum{Name: pack.Name, Size: packSize}
 	}
 	return orderedPacks
 }
 
 func report(packages []PackageNameWithSum, limit uint8) {
-	// TODO -- display human readable size
+	// TODO: display human readable size
 	var limitedPackages []PackageNameWithSum
 	if uint8(len(packages)) > limit {
 		limitedPackages = packages[:limit]

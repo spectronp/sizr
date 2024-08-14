@@ -27,11 +27,11 @@ to_human_readable() {
     declare prefix_num
     for i in {3..1}
     do
-        (( $raw_size / $base ** $i )) && prefix_num="$i" && break # TODO -- check the error here
+        (( $raw_size / $base ** $i )) && prefix_num="$i" && break # TODO: check the error here
     done
 
     prefix_num="${prefix_num:-0}"
-    size=$(printf %.2f "$(( $raw_size / $base ** $prefix_num ))") # TODO -- numbers are being rounded ( e.g 5 / 2 = 2.00 )
+    size=$(printf %.2f "$(( $raw_size / $base ** $prefix_num ))") # TODO: numbers are being rounded ( e.g 5 / 2 = 2.00 )
     prefix=${prefixes[$prefix_num]}
     unit="${prefix}iB"
 
@@ -51,8 +51,8 @@ dpkg_output() {
     cmd_type="$1"
     case "$cmd_type" in
         'info')
-            package_name="$5" # TODO -- automate it
-            cat "$packages_file" | awk "\$1 == \"$package_name\" { print \$1,\$3,\$4 }" # TODO -- use jq here
+            package_name="$5" # TODO: automate it
+            cat "$packages_file" | awk "\$1 == \"$package_name\" { print \$1,\$3,\$4 }" # TODO: use jq here
             ;;
     esac
 }
@@ -69,7 +69,7 @@ pacman_output() {
             # package_size=$(jq -r ".$package_name.size" "$packages_file")
             # package_size=$(to_human_readable $package_size)
 
-            # TODO -- make this more readable
+            # TODO: make this more readable
             deps=$(jq -r "reduce .$package_name.deps[] as \$dep (\"\"; . + \" \" + \$dep )" "$packages_file")
             package_type=$(jq -r ".$package_name.isExplicit" "$packages_file")
             [[ "$package_type" == "true" ]] && package_type="Explicitly installed" || package_type="Installed as a dependency for another package"
@@ -97,6 +97,6 @@ do
     fi
 done
 
-# TODO -- error if $cmd is empty
+# TODO: error if $cmd is empty
 
 ${package_manager}_output $cmd "$@"

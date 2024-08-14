@@ -29,11 +29,11 @@ func TestMain(m *testing.M) {
 	vars.DB_FILE = "/tmp/sizr_db"
 	defer os.Remove("/tmp/sizr_db")
 
-	mockData, _ = data.NewData(helpers.MockRunner) // NOTE -- if Data is broken, this data will break this tests too ( data is used more along the file )
+	mockData, _ = data.NewData(helpers.MockRunner) // NOTE: if Data is broken, this data will break this tests too, maybe use mockgen ? ( data is used more along the file )
 	m.Run()
 }
 
-func TestListTree(t *testing.T) {
+func TestListTree(t *testing.T) { // TODO: understand how this works
 	firstPack := types.Package{
 		Name:       "exp3",
 		IsExplicit: true,
@@ -58,7 +58,7 @@ func TestListTree(t *testing.T) {
 		expectedPackages[name] = mockData.GetPackage(name)
 	}
 
-	listTree(firstPack, depsToIgnore, &mockData) // TODO -- assert it ignores the packages from second arg
+	listTree(firstPack, depsToIgnore, &mockData) // TODO: assert it ignores the packages from second arg
 	if !cmp.Equal(expectedPackages, depsToIgnore) {
 		fmt.Println(cmp.Diff(expectedPackages, depsToIgnore))
 		t.Error("listTree function returned something different from expected")
@@ -108,7 +108,7 @@ func TestOrderBySum(t *testing.T) {
 
 func runApp(args []string) (int, string) {
 	// reset DB
-	os.Remove(vars.DB_FILE) // NOTE -- This is needed because "defer os.Remove()" call on TestMain is not running, check later
+	os.Remove(vars.DB_FILE) // NOTE: This is needed because "defer os.Remove()" call on TestMain is not running, check later
 
 	args = append([]string{"sizr"}, args...)
 

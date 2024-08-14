@@ -2,8 +2,8 @@
 
 # name type size deps...
 
-# TODO -- deal with circular dependencies
-# TODO -- generate variables closer to json output
+# TODO: deal with circular dependencies
+# TODO: generate variables closer to json output
 
 while [[ "$#" -gt 0 ]]
 do
@@ -49,7 +49,7 @@ odd() {
     [[ "$num_pick" -le $1 ]] && return 0
 }
 
-output() { # TODO -- fix: the , after the last package
+output() { # TODO: fix: the , after the last package
     echo "$*" >> "$output_file"
 
     [ "$2" == "exp" ] && is_exp=true || is_exp=false

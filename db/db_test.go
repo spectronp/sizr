@@ -13,7 +13,7 @@ import (
 	"testing"
 )
 
-var tmpDir string // TODO -- use MapFS
+var tmpDir string // TODO: try to use MapFS
 var packagesJson string
 var tmpPackagesJson string
 

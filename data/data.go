@@ -17,7 +17,7 @@ import (
 
 type Data struct {
 	Manager     string
-	PackageList map[string]types.Package // NOTE -- Should this be private ?
+	PackageList map[string]types.Package // NOTE: Should this be private ?
 }
 
 type ScriptRunner func(script string, args ...string) (output string, err error)
@@ -111,7 +111,7 @@ func (d Data) GetPackage(name string) types.Package {
 	return pack
 }
 
-func (d Data) GetExplicit() map[string]types.Package { // NOTE -- should use map[string]*Package ?
+func (d Data) GetExplicit() map[string]types.Package { // NOTE: should use map[string]*Package ?
 	explicit := make(map[string]types.Package)
 
 	for _, pack := range d.PackageList {
