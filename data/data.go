@@ -2,6 +2,7 @@ package data
 
 import (
 	"log"
+	"runtime"
 
 	"github.com/spectronp/sizr/db"
 	"github.com/spectronp/sizr/types"
@@ -69,7 +70,7 @@ func getPackages(manager string, runner ScriptRunner) map[string]types.Package {
 	namesChannel := make(chan string, packagesCount)
 	packagesChannel := make(chan types.Package, packagesCount)
 
-	workerCount := 6
+	workerCount := runtime.NumCPU() / 2 // NOTE: this can still use more than 50% of CPU
 	for w := 1; w <= workerCount; w++ {
 		go getPackageInfoWorker(namesChannel, packagesChannel, runner, manager)
 	}
