@@ -10,5 +10,4 @@ var BASEDIR string
 
 func init() {
 	ENV = os.Getenv("SIZR_ENV")
-	BASEDIR = os.Getenv("BASEDIR") // TODO: should be passed with ldflags
 }
