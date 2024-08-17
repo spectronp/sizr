@@ -1,14 +1,22 @@
 package data
 
 import (
+	"os"
+
 	"github.com/spectronp/sizr/tests"
 	"github.com/spectronp/sizr/types"
+	"github.com/spectronp/sizr/vars"
 
 	"fmt"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
 )
+
+func TestMain(m *testing.M) {
+	vars.BASEDIR = os.Getenv("BASEDIR")
+	m.Run()
+}
 
 func TestCanBuildData(t *testing.T) {
 	_, err := NewData(helpers.MockRunner) // NOTE: do this inside InitMain ?

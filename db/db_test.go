@@ -18,6 +18,8 @@ var packagesJson string
 var tmpPackagesJson string
 
 func TestMain(m *testing.M) {
+	vars.BASEDIR = os.Getenv("BASEDIR")
+
 	var err error
 	tmpDir, err = os.MkdirTemp("", "sizr_tests-")
 	defer os.RemoveAll(tmpDir)
