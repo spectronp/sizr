@@ -97,6 +97,9 @@ do
     fi
 done
 
-# TODO: error if $cmd is empty
+if [[ -z "$cmd" ]]; then
+    echo "Could not find manager command"
+    exit 1
+fi
 
 ${package_manager}_output $cmd "$@"
