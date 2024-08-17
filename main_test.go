@@ -177,7 +177,7 @@ func TestListReport(t *testing.T) {
 		t.Errorf("Expected return code 0, got %d", returnCode)
 	}
 
-	expectedOutput := "exp1     51200\nexp3     40960\nexp2     20480\n"
+	expectedOutput := "exp1     50 KiB\nexp3     40 KiB\nexp2     20 KiB\n"
 	if output != expectedOutput {
 		fmt.Print(cmp.Diff(expectedOutput, output))
 		t.Error("Output is different from the expected")
@@ -186,7 +186,7 @@ func TestListReport(t *testing.T) {
 
 func TestLimitReport(t *testing.T) {
 	args := []string{"--limit", "2"}
-	expectedOutput := "exp1     51200\nexp3     40960\n"
+	expectedOutput := "exp1     50 KiB\nexp3     40 KiB\n"
 
 	returnCode, output := runApp(args)
 

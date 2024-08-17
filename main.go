@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/dustin/go-humanize"
 	"github.com/spectronp/sizr/data"
 	"github.com/spectronp/sizr/types"
 
@@ -80,7 +81,6 @@ func orderBySumSize(dataObj *data.Data) []PackageNameWithSum {
 }
 
 func report(packages []PackageNameWithSum, limit uint8) {
-	// TODO: display human readable size
 	var limitedPackages []PackageNameWithSum
 	if uint8(len(packages)) > limit {
 		limitedPackages = packages[:limit]
@@ -103,7 +103,7 @@ func report(packages []PackageNameWithSum, limit uint8) {
 			gapString += " "
 		}
 
-		fmt.Printf("%s%s%d\n", pack.Name, gapString, pack.Size)
+		fmt.Printf("%s%s%s\n", pack.Name, gapString, humanize.IBytes(uint64(pack.Size)))
 	}
 }
 
