@@ -107,14 +107,18 @@
   "dep7": {
     "isExplicit": false,
     "size": 10240,
-    "deps": [],
+    "deps": [
+      "dep1"
+    ],
     "name": "dep7",
     "version": "0.0.0"
   },
   "dep8": {
     "isExplicit": false,
     "size": 10240,
-    "deps": [],
+    "deps": [
+      "dep1"
+    ],
     "name": "dep8",
     "version": "0.0.0"
   },

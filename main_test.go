@@ -69,13 +69,14 @@ func TestListTree(t *testing.T) { // TODO: understand how this works
 func TestSumSize(t *testing.T) {
 	start := mockData.GetPackage("exp1")
 	ignorePackagesNames := []string{"rev1", "rev2", "rev3", "rev4"}
-	ignoredPacakges := make(map[string]types.Package)
+	ignoredPackages := make(map[string]types.Package)
 	for _, ignoredName := range ignorePackagesNames {
-		ignoredPacakges[ignoredName] = mockData.GetPackage(ignoredName)
+		ignoredPackages[ignoredName] = mockData.GetPackage(ignoredName)
 	}
+	alreadyCounted := map[string]bool{}
 
 	expectedSize := uint(51200)
-	actualSize := sumSize(start, ignoredPacakges, &mockData)
+	actualSize := sumSize(start, ignoredPackages, alreadyCounted, &mockData)
 
 	if expectedSize != actualSize {
 		t.Errorf("Expected size %d, got size %d", expectedSize, actualSize)
