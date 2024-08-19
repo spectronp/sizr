@@ -42,22 +42,11 @@ func TestListTree(t *testing.T) {
 		Version:    "0.0.0",
 		Deps:       []string{"dep11", "dep12"},
 	}
-	depsToIgnore := map[string]types.Package{
-		"dep13": {
-			Name:       "dep13",
-			Size:       10240,
-			IsExplicit: false,
-			Version:    "0.0.0",
-			Deps:       []string{"dep16"},
-		},
+	depsToIgnore := map[string]bool{
+		"dep13": true,
 	}
 
-	expectedList := []string{"dep13", "dep11", "dep12", "dep15", "rev2", "rev3", "dep5", "dep6", "dep9", "dep10"}
-	expectedPackages := map[string]types.Package{}
-
-	for _, name := range expectedList {
-		expectedPackages[name] = mockData.GetPackage(name)
-	}
+	expectedPackages := map[string]bool{"dep13": true, "dep11": true, "dep12": true, "dep15": true, "rev2": true, "rev3": true, "dep5": true, "dep6": true, "dep9": true, "dep10": true}
 
 	listTree(firstPack, depsToIgnore, &mockData)
 	if !cmp.Equal(expectedPackages, depsToIgnore) {
@@ -69,9 +58,9 @@ func TestListTree(t *testing.T) {
 func TestSumSize(t *testing.T) {
 	start := mockData.GetPackage("exp1")
 	ignorePackagesNames := []string{"rev1", "rev2", "rev3", "rev4"}
-	ignoredPackages := make(map[string]types.Package)
+	ignoredPackages := make(map[string]bool)
 	for _, ignoredName := range ignorePackagesNames {
-		ignoredPackages[ignoredName] = mockData.GetPackage(ignoredName)
+		ignoredPackages[ignoredName] = true
 	}
 	alreadyCounted := map[string]bool{}
 

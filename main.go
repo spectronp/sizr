@@ -23,7 +23,7 @@ func calcSize(pack string, dataObj *data.Data) uint {
 	explictPackages := dataObj.GetExplicit()
 	delete(explictPackages, pack)
 
-	depsToIgnore := make(map[string]types.Package) // NOTE: could I use map[string]bool ?
+	depsToIgnore := make(map[string]bool)
 	for _, explicitPack := range explictPackages {
 		listTree(explicitPack, depsToIgnore, dataObj)
 	}
@@ -31,13 +31,13 @@ func calcSize(pack string, dataObj *data.Data) uint {
 	return sumSize(target, depsToIgnore, alreadyCounted, dataObj)
 }
 
-func listTree(target types.Package, depsToIgnore map[string]types.Package, dataObj *data.Data) {
+func listTree(target types.Package, depsToIgnore map[string]bool, dataObj *data.Data) {
 	for _, packName := range target.Deps {
 		pack := dataObj.GetPackage(packName)
-		if _, alreadyInList := depsToIgnore[packName]; alreadyInList {
+		if depsToIgnore[packName] {
 			continue
 		}
-		depsToIgnore[pack.Name] = pack // this can add an already added package and run another branch of listTree
+		depsToIgnore[pack.Name] = true
 
 		listTree(pack, depsToIgnore, dataObj)
 	}
@@ -46,11 +46,11 @@ func listTree(target types.Package, depsToIgnore map[string]types.Package, dataO
 /*
 NOTE: maybe use listTree first with an ignorePackages parameter and then iterate the list doing the sum ?
 */
-func sumSize(start types.Package, ignorePackages map[string]types.Package, alreadyCounted map[string]bool, dataObj *data.Data) uint {
+func sumSize(start types.Package, ignorePackages map[string]bool, alreadyCounted map[string]bool, dataObj *data.Data) uint {
 	totalSize := start.Size
 
 	for _, packName := range start.Deps {
-		if _, shouldBeIgnored := ignorePackages[packName]; shouldBeIgnored {
+		if ignorePackages[packName] {
 			continue
 		}
 		if alreadyCounted[packName] {
