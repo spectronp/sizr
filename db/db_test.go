@@ -29,6 +29,7 @@ func TestMain(m *testing.M) {
 
 	packagesJson = tmpDir + "/original.json"
 	tmpPackagesJson = tmpDir + "/modified.json"
+	utils.SaveJson(map[any]any{}, tmpPackagesJson)
 
 	var packages map[string]types.Package
 	packages, err = utils.LoadJson[map[string]types.Package](vars.BASEDIR + "/tests/packages.json")

@@ -20,12 +20,6 @@ type DB struct {
 func Load() DB {
 	jsonFile, err := os.ReadFile(vars.DB_FILE)
 
-	if os.IsNotExist(err) {
-		jsonFile = []byte("{}")
-		os.WriteFile(vars.DB_FILE, jsonFile, 0644)
-		err = nil
-	}
-
 	if err != nil {
 		panic(err)
 	}
