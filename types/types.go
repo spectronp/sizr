@@ -1,6 +1,6 @@
 package types
 
-type Package struct { // TODO: make fields exported and immutable
+type Package struct {
 	Name       string
 	IsExplicit bool
 	Version    string

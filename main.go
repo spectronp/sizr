@@ -43,9 +43,6 @@ func listTree(target types.Package, depsToIgnore map[string]bool, dataObj *data.
 	}
 }
 
-/*
-NOTE: maybe use listTree first with an ignorePackages parameter and then iterate the list doing the sum ?
-*/
 func sumSize(start types.Package, ignorePackages map[string]bool, alreadyCounted map[string]bool, dataObj *data.Data) uint {
 	totalSize := start.Size
 
@@ -80,7 +77,7 @@ func orderBySumSize(dataObj *data.Data) []PackageNameWithSum {
 			orderedPacks = append(orderedPacks, PackageNameWithSum{Name: pack.Name, Size: packSize})
 			continue
 		}
-		orderedPacks = append(orderedPacks[:insertIndex+1], orderedPacks[insertIndex:]...) // NOTE: should i make more readable ?
+		orderedPacks = append(orderedPacks[:insertIndex+1], orderedPacks[insertIndex:]...)
 		orderedPacks[insertIndex] = PackageNameWithSum{Name: pack.Name, Size: packSize}
 	}
 	return orderedPacks
