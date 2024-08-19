@@ -34,7 +34,7 @@ func TestMain(m *testing.M) {
 	m.Run()
 }
 
-func TestListTree(t *testing.T) { // TODO: understand how this works
+func TestListTree(t *testing.T) {
 	firstPack := types.Package{
 		Name:       "exp3",
 		IsExplicit: true,
@@ -59,7 +59,7 @@ func TestListTree(t *testing.T) { // TODO: understand how this works
 		expectedPackages[name] = mockData.GetPackage(name)
 	}
 
-	listTree(firstPack, depsToIgnore, &mockData) // TODO: assert it ignores the packages from second arg
+	listTree(firstPack, depsToIgnore, &mockData)
 	if !cmp.Equal(expectedPackages, depsToIgnore) {
 		fmt.Println(cmp.Diff(expectedPackages, depsToIgnore))
 		t.Error("listTree function returned something different from expected")
