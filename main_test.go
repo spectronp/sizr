@@ -4,6 +4,7 @@ import (
 	"github.com/spectronp/sizr/data"
 	"github.com/spectronp/sizr/tests"
 	"github.com/spectronp/sizr/types"
+	"github.com/spectronp/sizr/utils"
 	"github.com/spectronp/sizr/vars"
 
 	"fmt"
@@ -29,6 +30,9 @@ func TestMain(m *testing.M) {
 
 	vars.DB_FILE = "/tmp/sizr_db"
 	defer os.Remove("/tmp/sizr_db")
+	if err := utils.SaveJson(map[string]any{}, vars.DB_FILE); err != nil {
+		panic(err)
+	}
 
 	mockData, _ = data.NewData(helpers.MockRunner) // NOTE: if Data is broken, this data will break this tests too, maybe use mockgen ? ( data is used more along the file )
 	m.Run()
@@ -98,9 +102,6 @@ func TestOrderBySum(t *testing.T) {
 // E2E Tests
 
 func runApp(args []string) (int, string) {
-	// reset DB
-	os.Remove(vars.DB_FILE) // NOTE: This is needed because "defer os.Remove()" call on TestMain is not running, check later
-
 	args = append([]string{"sizr"}, args...)
 
 	pipeReader, pipeWriter, err := os.Pipe()

@@ -5,6 +5,7 @@ import (
 
 	"github.com/spectronp/sizr/tests"
 	"github.com/spectronp/sizr/types"
+	"github.com/spectronp/sizr/utils"
 	"github.com/spectronp/sizr/vars"
 
 	"fmt"
@@ -15,6 +16,12 @@ import (
 
 func TestMain(m *testing.M) {
 	vars.BASEDIR = os.Getenv("BASEDIR")
+	vars.DB_FILE = "/tmp/sizr_db"
+	defer os.Remove("/tmp/sizr_db")
+	if err := utils.SaveJson(map[string]any{}, vars.DB_FILE); err != nil {
+		panic(err)
+	}
+
 	m.Run()
 }
 
