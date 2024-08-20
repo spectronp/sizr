@@ -112,7 +112,7 @@ func (d Data) GetPackage(name string) types.Package {
 	return pack
 }
 
-func (d Data) GetExplicit() map[string]types.Package { // NOTE: should use map[string]*Package ?
+func (d Data) GetExplicit() map[string]types.Package {
 	explicit := make(map[string]types.Package)
 
 	for _, pack := range d.packageList {
