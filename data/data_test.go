@@ -36,8 +36,8 @@ func TestCanBuildData(t *testing.T) {
 func TestManagerIsSet(t *testing.T) {
 	data, _ := NewData(helpers.MockRunner)
 
-	if data.Manager != "pm" {
-		t.Errorf("data.Manager should be 'pm', is '%s' instead", data.Manager)
+	if data.manager != "pm" {
+		t.Errorf("data.manager should be 'pm', is '%s' instead", data.manager)
 	}
 }
 

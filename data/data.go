@@ -17,8 +17,8 @@ import (
 )
 
 type Data struct {
-	Manager     string
-	PackageList map[string]types.Package // NOTE: Should this be private ?
+	manager     string
+	packageList map[string]types.Package
 }
 
 type ScriptRunner func(script string, args ...string) (output string, err error)
@@ -29,7 +29,7 @@ func NewData(runner ScriptRunner) (data Data, err error) {
 		err = fmt.Errorf("Error on getting package manager: %w\n", err)
 	}
 	packageList := getPackages(manager, runner)
-	return Data{Manager: manager, PackageList: packageList}, err
+	return Data{manager: manager, packageList: packageList}, err
 }
 
 func getPackageInfoWorker(packageNames <-chan string, returnedPacks chan<- types.Package, runner ScriptRunner, manager string) {
@@ -108,14 +108,14 @@ func getPackages(manager string, runner ScriptRunner) map[string]types.Package {
 }
 
 func (d Data) GetPackage(name string) types.Package {
-	pack := d.PackageList[name]
+	pack := d.packageList[name]
 	return pack
 }
 
 func (d Data) GetExplicit() map[string]types.Package { // NOTE: should use map[string]*Package ?
 	explicit := make(map[string]types.Package)
 
-	for _, pack := range d.PackageList {
+	for _, pack := range d.packageList {
 		if pack.IsExplicit {
 			explicit[pack.Name] = pack
 		}
