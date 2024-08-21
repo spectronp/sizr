@@ -21,9 +21,9 @@ var mockData data.Data
 func TestMain(m *testing.M) {
 	VERSION = "v0.1"
 	vars.BASEDIR = os.Getenv("BASEDIR")
-	helpBytes, err := os.ReadFile(".help")
+	helpBytes, err := os.ReadFile("help.txt")
 	if err != nil {
-		log.Println("Error on reading .help")
+		log.Println("Error on reading help.txt")
 		panic(err)
 	}
 	HELP_MESSAGE = string(helpBytes)
