@@ -32,8 +32,8 @@ cd sizr
 make
 make install
 ```
-
-**IMPORTANT!** The user needs to be in the `wheel` group to use the database file
+> [!IMPORTANT]
+> The user needs to be in the `wheel` group to use the database file
 
 Add current user to `wheel`:
 
